@@ -11,7 +11,7 @@ public class SampleController {
     @GetMapping("/")
     public String home() {
         log.info("home............");
-        return "home";
+        return "index";
     }
     //@GetMapping("/user/login") //UserController에 login이 있어서 주석처리
     public void login() {

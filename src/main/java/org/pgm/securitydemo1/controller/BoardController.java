@@ -1,5 +1,6 @@
-package org.pgm.securitydemo1;
+package org.pgm.securitydemo1.controller;
 
+import org.pgm.securitydemo1.config.auth.PrincipalDetails;
 import org.pgm.securitydemo1.domain.Board;
 import org.pgm.securitydemo1.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,9 @@ public class BoardController {
     public String insert() {
         return "board/insert";
     }
-   /* @PostMapping("/insert")
+    @PostMapping("/insert")
     public String insert(Board board, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        boardService.insert(boardDTO);
+        boardService.insert(board, principalDetails.getUser()); //principalDetails를 통해 로그인한 사용자 정보를 가져옴(권한 정보 포함)
         return "redirect:/board/list";
-    }*/
+    }
 }

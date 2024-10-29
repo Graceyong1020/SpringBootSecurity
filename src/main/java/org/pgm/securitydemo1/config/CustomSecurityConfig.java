@@ -7,9 +7,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,11 +33,11 @@ public class CustomSecurityConfig {
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(formLoginConfigurer -> formLoginConfigurer
-                        .loginPage("/user/login")
-                        .loginProcessingUrl("/loginProcess")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                        .defaultSuccessUrl("/")
+                        .loginPage("/user/login") // 로그인 페이지 설정
+                        .loginProcessingUrl("/loginProcess") // 로그인 처리 페이지 설정
+                        .usernameParameter("username") // 로그인 페이지의 username 파라미터 설정
+                        .passwordParameter("password") // 로그인 페이지의 password 파라미터 설정
+                        .defaultSuccessUrl("/") // 로그인 성공 후 이동할 페이지
                         .permitAll())
                 .logout(logoutConfigurer -> logoutConfigurer
                         .logoutUrl("/logout")
@@ -53,6 +56,18 @@ public class CustomSecurityConfig {
         return (web) -> web.ignoring() // static resource에 대한 security 설정을 무시하도록 설정
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
         //.requestMatchers("/static/**"); // 구버전: static resource에 대한 security 설정을 무시하도록 설정
+    }
+
+    @Bean // authenticationManager를 Bean 역할:
+    public AuthenticationManager authenticationManagerBean(HttpSecurity http,  // authenticationManager를 Bean을 등록하여
+                                                           BCryptPasswordEncoder bCryptPasswordEncoder,
+                                                           UserDetailsService userDetailsService,
+                                                           AuthenticationManagerBuilder authenticationManagerBuilder)
+            throws Exception {
+        AuthenticationManagerBuilder builder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+       builder.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+        return builder.build();
     }
 
 
