@@ -13,13 +13,14 @@ public class SampleController {
         log.info("home............");
         return "home";
     }
-    @GetMapping("/user/login")
+    //@GetMapping("/user/login") //UserController에 login이 있어서 주석처리
     public void login() {
         log.info("login............");
     }
     @GetMapping("/all") //모든 사용자가 접근 가능
-    public void exAll() {
+    public String exAll() {
         log.info("exAll............");
+        return "exAll";
     }
     @GetMapping("/member")
     public void exMember() {
